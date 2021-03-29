@@ -6,7 +6,7 @@ IMPLEMENTATION_SOURCE = sign.c test.c zkproof.c merkletree.c
 IMPLEMENTATION_HEADERS= sign.h keccaklib zkproof.h parameters.h merkletree.h
 
 test: $(IMPLEMENTATION_SOURCE) $(IMPLEMENTATION_HEADERS)
-	gcc -o test $(IMPLEMENTATION_SOURCE) $(CFLAGS) $(LFLAGS) -std=c11 -O3 -g -march=native 
+	$(CC) -o test $(IMPLEMENTATION_SOURCE) $(CFLAGS) $(LFLAGS) -std=c11 -O3 -g -march=native
 
 keccaklib: 
 	(cd XKCP; make Haswell/libkeccak.a)
