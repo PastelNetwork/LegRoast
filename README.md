@@ -23,12 +23,11 @@ make CC="x86_64-w64-mingw32-gcc" LDLIBS=-lmingw32 OpenSSLPath=/OPENSSL/INSTALL/P
 ```
 
 
-
 # Native build
 To build and run natively:
 
 ```
-make test
+make OpenSSLPath=/usr/local -f Makefile-gcc test
 ./test
 ````
 
