@@ -1,0 +1,24 @@
+export OpenSSLPath=./OpenSSL-amd64
+
+CC=gcc
+CFLAGS=-m64 -I XKCP/bin/generic64/ -I "${OpenSSLPath}/include/"
+LFLAGS=-L XKCP/bin/generic64/ -lkeccak -L "${OpenSSLPath}/lib/" -lcrypto
+
+IMPLEMENTATION_SOURCE = test.c
+IMPLEMENTATION_HEADERS= sign.h keccaklib zkproof.h parameters.h merkletree.h
+
+
+test: $(IMPLEMENTATION_SOURCE) $(IMPLEMENTATION_HEADERS) static
+	$(CC) -o test $(IMPLEMENTATION_SOURCE) $(CFLAGS) -L ./ -llegroast
+
+static:
+	$(CC) -mmacosx-version-min=10.15 -c sign.c zkproof.c merkletree.c $(CFLAGS) $(LFLAGS) -O2 -g0 -march=native -mtune=native
+	libtool -static -o liblegroastobj.a sign.o zkproof.o merkletree.o
+	libtool -static -o liblegroast.a liblegroastobj.a XKCP/bin/generic64/libkeccak.a ${OpenSSLPath}/lib/libcrypto.a
+
+keccaklib:
+	(cd XKCP; make generic64/libkeccak.a)
+
+.PHONY: clean
+clean:
+	rm -rf PQCgenKAT_sign test debug ./XKCP/bin liblegroast.a liblegroastobj.a liblegroast.mri test_offline intermediateValues.txt *.req *.rsp >/dev/null *.o

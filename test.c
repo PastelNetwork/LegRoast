@@ -13,7 +13,7 @@ uint64_t rdtsc(){
 #define TIC printf("\n"); uint64_t cl = rdtsc();
 #define TOC(A) printf("%s cycles = %lu \n",#A ,rdtsc() - cl); cl = rdtsc();
 
-void main(){
+int main(){
 
 	//test();
 	//return;
@@ -59,4 +59,6 @@ void main(){
 	printf("keygen cycles :       %lu \n", keygenTime );
 	printf("signing cycles :      %lu \n", signTime/TRIALS );
 	printf("verification cycles : %lu \n", verifyTime/TRIALS );
+
+	return 0;
 }
