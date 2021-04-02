@@ -25,4 +25,5 @@ keccaklib:
 
 .PHONY: clean
 clean:
-	rm -f PQCgenKAT_sign test debug test_offline intermediateValues.txt *.req *.rsp >/dev/null
+	rm -rf PQCgenKAT_sign test debug ./XKCP/bin liblegroast.a liblegroastobj.a liblegroast.mri test_offline intermediateValues.txt *.req *.rsp >/dev/null *.o
+

@@ -22,8 +22,19 @@ Cross-compile LegRoast from its root directory:
 make CC="x86_64-w64-mingw32-gcc" LDLIBS=-lmingw32 OpenSSLPath=/OPENSSL/INSTALL/PATH test
 ```
 
+# MacOS build
+OpenSSL building configuration params:
+```
+./Configure --prefix=/FULL-PATH-TO/openssl/installdir --openssldir=/FULL-PATH-TO/openssl/installdir darwin64-x86_64-cc
+```
 
-# Native build
+To compile liblegroast.a:
+```
+make OpenSSLPath=/FULL-PATH-TO/openssl/installdir CC=clang -f Makefile-osx test
+```
+
+
+# Linux build
 To build and run natively:
 
 ```
