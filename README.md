@@ -3,43 +3,62 @@ Post-Quantum signatures based on the Legendre PRF
 
 Parameters can be found and changed in parameters.h
 
-# Cross-compilation on linux to windows
+# Linux emcc build
 
-Install cross-compiler toolchain and cross-compile OpenSSL dependency first:
+Compile openssl with emcc. Configure and build openssl using emconfigure and emmake.
+Set path to CC, AR and RNALIB for make to emcc tools.
 
 ```
-apt-get install build-essential checkinstall zlib1g-dev git mingw-w64 -y
-cd ~
 git clone --branch OpenSSL_1_1_1-stable https://github.com/openssl/openssl.git
 cd openssl
-./Configure --static -static --cross-compile-prefix=x86_64-w64-mingw32- mingw64
-make -j4
-main install
-````
+emconfigure ./config \
+  no-asm \
+  no-threads \
+  no-engine \
+  no-hw \
+  no-weak-ssl-ciphers \
+  no-dtls \
+  no-shared \
+  no-dso \
+  --prefix=$EMSCRIPTEN/system
 
-Cross-compile LegRoast from its root directory:
+emmake make CC="{path_to_emscripten}/emcc" AR="{path_to_emscripten}/emar" RANLIB="{path_to_emscripten}/emranlib"
 ```
-make CC="x86_64-w64-mingw32-gcc" LDLIBS=-lmingw32 OpenSSLPath=/OPENSSL/INSTALL/PATH test
-```
-
-# MacOS build
-OpenSSL building configuration params:
-```
-./Configure --prefix=/FULL-PATH-TO/openssl/installdir --openssldir=/FULL-PATH-TO/openssl/installdir darwin64-x86_64-cc
-```
-
-To compile liblegroast.a:
-```
-make OpenSSLPath=/FULL-PATH-TO/openssl/installdir CC=clang -f Makefile-osx test
-```
-
-
-# Linux build
-To build and run natively:
+Build LegRoast with emmake.
 
 ```
-make OpenSSLPath=/usr/local -f Makefile-gcc test
-./test
-````
+emmake make -f Makefile-emcc
+```
+To compile liblegroast.a to WASM module with exported functions:
 
-Enjoy
+```
+export TOTAL_MEMORY=16777216
+export EXPORTED_FUNCTIONS="[ \
+    '_keygen', \
+    '_verify', \
+    '_sign', \
+    '_memcpy'
+]"
+
+export LIBRARY_FUNCTIONS="[ \
+    'memcpy', \
+    'memset', \
+    'malloc', \
+    'free'
+]"
+
+echo "Running Emscripten..."
+emcc liblegroast.a \
+    -s TOTAL_MEMORY=${TOTAL_MEMORY} \
+    -s ALLOW_MEMORY_GROWTH=1 \
+    -s ASSERTIONS=0 \
+    -s DISABLE_EXCEPTION_CATCHING=1 \
+    -s EXPORTED_FUNCTIONS="${EXPORTED_FUNCTIONS}" \
+    -s DEFAULT_LIBRARY_FUNCS_TO_INCLUDE="${LIBRARY_FUNCTIONS}" \
+    -s WASM=1 -s EXIT_RUNTIME=0 -s INVOKE_RUN=0 \
+    -s MODULARIZE=1 \
+    -s EXPORT_NAME=Legroast \
+    -O2 \
+    --memory-init-file 0 \
+    -o legroast.js
+```
