@@ -4,15 +4,6 @@
 
 #define TRIALS 1000
 
-static inline
-uint64_t rdtsc(){
-    unsigned int lo,hi;
-    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-    return ((uint64_t)hi << 32) | lo;
-}
-#define TIC printf("\n"); uint64_t cl = rdtsc();
-#define TOC(A) printf("%s cycles = %lu \n",#A ,rdtsc() - cl); cl = rdtsc();
-
 int main(){
 
 	//test();
@@ -38,19 +29,10 @@ int main(){
 
 	for(int i=0 ; i<TRIALS; i++){
 		if(i == 0){
-			t = rdtsc();
 			keygen(pk,sk);
-			keygenTime += rdtsc()-t;
 		}
-
-		t = rdtsc();
 		sign(sk,pk,message,1,sig,&sig_len);
-		signTime += rdtsc()-t;
-
-		t = rdtsc();
 		int ver = verify(pk,message,1,sig);
-		verifyTime += rdtsc()-t;
-
 		if(ver <= 0){
 			printf("Signature invalid! \n");
 		}

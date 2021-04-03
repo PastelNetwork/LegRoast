@@ -1,14 +1,5 @@
 #include "zkproof.h"
 
-static inline
-uint64_t rdtsc(){
-    unsigned int lo,hi;
-    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-    return ((uint64_t)hi << 32) | lo;
-}
-#define TIC printf(""); uint64_t cl = rdtsc();
-#define TOC(A) printf("%s cycles = %lu \n",#A ,rdtsc() - cl); cl = rdtsc();
-
 uint128_t m127 = ((((uint128_t) 1) << 127)-1);
 
 inline 
@@ -142,7 +133,7 @@ unsigned char legendre_symbol_ct(uint128_t *a){
 
 void test(){
 	uint128_t x = ((uint128_t) 1) << 100;
-	TIC
+	//TIC
 	for (int j = 0; j < 20; ++j)
 	{
 		int sum = 0;
@@ -152,7 +143,7 @@ void test(){
 			sum += legendre_symbol_ct(&a);
 		}
 		printf("sum: %d \n", sum);
-		TOC(test);
+	//	TOC(test);
 	}
 }
 

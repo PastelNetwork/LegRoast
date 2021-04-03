@@ -1,14 +1,5 @@
-
+l
 #include "sign.h"
-
-static inline
-uint64_t rdtsc(){
-    unsigned int lo,hi;
-    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-    return ((uint64_t)hi << 32) | lo;
-}
-#define TIC printf("\n"); uint64_t cl = rdtsc();
-#define TOC(A) printf("%s cycles = %lu \n",#A ,rdtsc() - cl); cl = rdtsc();
 
 void sign(const unsigned char *sk, const unsigned char *pk, const unsigned char *m, uint64_t mlen, unsigned char *sig, uint64_t *sig_len){
 	memset(sig,0,SIG_BYTES);
