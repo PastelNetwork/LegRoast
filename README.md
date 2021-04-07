@@ -32,33 +32,16 @@ emmake make -f Makefile-emcc
 To compile liblegroast.a to WASM module with exported functions:
 
 ```
-export TOTAL_MEMORY=16777216
-export EXPORTED_FUNCTIONS="[ \
-    '_keygen', \
-    '_verify', \
-    '_sign', \
-    '_memcpy'
-]"
-
-export LIBRARY_FUNCTIONS="[ \
-    'memcpy', \
-    'memset', \
-    'malloc', \
-    'free'
-]"
-
 echo "Running Emscripten..."
-emcc liblegroast.a \
-    -s TOTAL_MEMORY=${TOTAL_MEMORY} \
+emcc bind.cpp liblegroast.a \
+    -Iinclude \
+    --bind \
     -s ALLOW_MEMORY_GROWTH=1 \
-    -s ASSERTIONS=0 \
-    -s DISABLE_EXCEPTION_CATCHING=1 \
-    -s EXPORTED_FUNCTIONS="${EXPORTED_FUNCTIONS}" \
-    -s DEFAULT_LIBRARY_FUNCS_TO_INCLUDE="${LIBRARY_FUNCTIONS}" \
+    -s MEMORY_GROWTH_GEOMETRIC_STEP=1 \
     -s WASM=1 -s EXIT_RUNTIME=0 -s INVOKE_RUN=0 \
     -s MODULARIZE=1 \
+    -s FETCH=1 \
     -s EXPORT_NAME=Legroast \
-    -O2 \
-    --memory-init-file 0 \
+    -flto -O3 \
     -o legroast.js
 ```
